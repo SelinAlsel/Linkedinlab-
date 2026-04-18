@@ -981,6 +981,7 @@ else:
 ```
 
 ### 12.5 Analyse 2 : Top 10 des postes les mieux rémunérés par industrie
+<img width="783" height="427" alt="image" src="https://github.com/user-attachments/assets/fee50481-9e2a-47e9-9d98-7ef8a590dfc3" />
 
 Cette deuxième partie permet à l’utilisateur de sélectionner une industrie et d’afficher les 10 postes les mieux rémunérés, selon le salaire maximum moyen.
 
