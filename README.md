@@ -76,3 +76,108 @@ CREATE SCHEMA IF NOT EXISTS bronze;
 CREATE SCHEMA IF NOT EXISTS silver;
 CREATE SCHEMA IF NOT EXISTS gold;
 ```
+### 5.2 Sélection du warehouse
+
+Avant toute opération de chargement ou de transformation, il est nécessaire de sélectionner un **warehouse** actif dans Snowflake.  
+Le warehouse représente la ressource de calcul utilisée pour exécuter les requêtes SQL.
+
+Sans cette instruction, certaines commandes comme `COPY INTO`, `CREATE TABLE AS SELECT` ou d’autres traitements peuvent échouer.
+
+```sql
+USE WAREHOUSE COMPUTE_WH;
+```
+### 5.3 Création du stage S3 et des formats de fichiers
+
+Cette étape consiste à configurer l’accès aux fichiers sources stockés dans le bucket S3 public fourni pour le projet.  
+Un **stage externe** est créé afin de référencer ce bucket dans Snowflake.
+
+Ensuite, deux **formats de fichiers** sont définis :
+
+- un format **CSV** pour les fichiers tabulaires,
+- un format **JSON** pour les fichiers structurés en tableau JSON.
+
+```sql
+USE SCHEMA bronze;
+
+CREATE OR REPLACE STAGE linkedin_stage
+  URL = 's3://snowflake-lab-bucket/'
+  COMMENT = 'Stage S3 public contenant les fichiers LinkedIn';
+
+LIST @linkedin_stage;
+
+CREATE OR REPLACE FILE FORMAT csv_format
+  TYPE = 'CSV'
+  FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+  SKIP_HEADER = 1
+  NULL_IF = ('NULL', 'null', 'N/A', '')
+  EMPTY_FIELD_AS_NULL = TRUE
+  TRIM_SPACE = TRUE
+  DATE_FORMAT = 'AUTO'
+  TIMESTAMP_FORMAT = 'AUTO';
+
+CREATE OR REPLACE FILE FORMAT json_format
+  TYPE = 'JSON'
+  STRIP_OUTER_ARRAY = TRUE
+  STRIP_NULL_VALUES = FALSE;
+```
+## 6. Couche Bronze : chargement des données brutes
+
+La couche **Bronze** contient les données brutes, c’est-à-dire les données importées directement depuis les fichiers du bucket S3, sans transformation avancée.
+
+### 6.1 Table `bronze.job_postings`
+
+Cette table contient les informations détaillées sur les offres d’emploi LinkedIn.
+
+```sql
+CREATE OR REPLACE TABLE bronze.job_postings (
+  job_id                     VARCHAR,
+  company_name               VARCHAR,
+  title                      VARCHAR,
+  description                TEXT,
+  max_salary                 FLOAT,
+  med_salary                 FLOAT,
+  min_salary                 FLOAT,
+  pay_period                 VARCHAR,
+  formatted_work_type        VARCHAR,
+  location                   VARCHAR,
+  applies                    INT,
+  original_listed_time       BIGINT,
+  remote_allowed             BOOLEAN,
+  views                      INT,
+  job_posting_url            VARCHAR,
+  application_url            VARCHAR,
+  application_type           VARCHAR,
+  expiry                     BIGINT,
+  closed_time                BIGINT,
+  formatted_experience_level VARCHAR,
+  skills_desc                TEXT,
+  listed_time                BIGINT,
+  posting_domain             VARCHAR,
+  sponsored                  BOOLEAN,
+  work_type                  VARCHAR,
+  currency                   VARCHAR,
+  compensation_type          VARCHAR
+);
+
+COPY INTO bronze.job_postings
+FROM @bronze.linkedin_stage/job_postings.csv
+FILE_FORMAT = (FORMAT_NAME = bronze.csv_format)
+ON_ERROR = 'CONTINUE';
+```
+### 6.2 Table `bronze.benefits`
+
+Cette table contient les avantages proposés dans les offres d’emploi.
+
+```sql
+CREATE OR REPLACE TABLE bronze.benefits (
+  job_id   VARCHAR,
+  inferred BOOLEAN,
+  type     VARCHAR
+);
+
+COPY INTO bronze.benefits
+FROM @bronze.linkedin_stage/benefits.csv
+FILE_FORMAT = (FORMAT_NAME = bronze.csv_format)
+ON_ERROR = 'CONTINUE';
+```
+
