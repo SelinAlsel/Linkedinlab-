@@ -967,8 +967,8 @@ if not df_top_titles.empty:
         alt.Chart(filtered_titles)
         .mark_bar()
         .encode(
-            x=alt.X("NB_OFFRES:Q", title="Nombre d'offres"),
-            y=alt.Y("TITLE:N", sort="-x", title="Titre du poste"),
+            x=alt.X("TITLE:N", sort="-x", title="Titre du poste"),
+            y=alt.Y("NB_OFFRES:Q", title="Nombre d'offres"),
             tooltip=["INDUSTRY_ID", "TITLE", "NB_OFFRES", "RANG"]
         )
         .properties(height=450)
@@ -1011,8 +1011,9 @@ if not df_top_salary.empty:
         alt.Chart(filtered_salary)
         .mark_bar()
         .encode(
-            x=alt.X("AVG_MAX_SALARY:Q", title="Salaire maximum moyen"),
-            y=alt.Y("TITLE:N", sort="-x", title="Titre du poste"),
+            x=alt.X("TITLE:N", sort="-x", title="Titre du poste"),
+            y=alt.Y("AVG_MAX_SALARY:Q", title="Salaire maximum moyen"),
+            
             tooltip=["INDUSTRY_ID", "TITLE", "AVG_MAX_SALARY", "RANG"]
         )
         .properties(height=450)
@@ -1022,9 +1023,10 @@ if not df_top_salary.empty:
     st.dataframe(filtered_salary, use_container_width=True)
 else:
     st.warning("Aucune donnée disponible pour l'analyse 2.")
+
 ```
 
-### 12.6 Analyse 4 : Répartition des offres d’emploi par secteur d’activité
+### 12.6 Analyse 3 : Répartition des offres d’emploi par secteur d’activité
 
 Cette visualisation montre la répartition des offres d’emploi selon les secteurs d’activité.
 
@@ -1036,7 +1038,7 @@ L’affichage comprend :
 ```
 # ANALYSE 4 : REPARTITION DES OFFRES PAR SECTEUR D'ACTIVITE
 
-st.header("4. Répartition des offres d'emploi par secteur d'activité")
+st.header("3. Répartition des offres d'emploi par secteur d'activité")
 
 if not df_industry_distribution.empty:
     chart_industry_distribution = (
@@ -1053,11 +1055,13 @@ if not df_industry_distribution.empty:
     st.altair_chart(chart_industry_distribution, use_container_width=True)
     st.dataframe(df_industry_distribution, use_container_width=True)
 else:
-    st.warning("Aucune donnée disponible pour l'analyse 4.")
+    st.warning("Aucune donnée disponible pour l'analyse 3.")
+
+
 ```
 
 
-### 12.7 Analyse 5 : Répartition des offres d’emploi par type d’emploi
+### 12.7 Analyse 4 : Répartition des offres d’emploi par type d’emploi
 
 Cette dernière visualisation présente la répartition des offres par type d’emploi.
 
@@ -1069,9 +1073,9 @@ Deux représentations graphiques sont proposées :
 Un tableau récapitulatif est également affiché.
 
 ```
-# ANALYSE 5 : REPARTITION DES OFFRES PAR TYPE D'EMPLOI
+# ANALYSE 4 : REPARTITION DES OFFRES PAR TYPE D'EMPLOI
 
-st.header("5. Répartition des offres d'emploi par type d'emploi")
+st.header("4. Répartition des offres d'emploi par type d'emploi")
 
 if not df_work_type_distribution.empty:
     col1, col2 = st.columns(2)
