@@ -979,10 +979,9 @@ if not df_top_titles.empty:
 else:
     st.warning("Aucune donnée disponible pour l'analyse 1.")
 ```
-```
+
 <img width="798" height="525" alt="TOP_10_industrie" src="https://github.com/user-attachments/assets/cffa0231-153c-4bab-800f-e3b08161cb37" />
 
-```
 
 ### 12.5 Analyse 2 : Top 10 des postes les mieux rémunérés par industrie
 
@@ -1030,11 +1029,10 @@ else:
     st.warning("Aucune donnée disponible pour l'analyse 2.")
 
 ```
-```
+
 <img width="776" height="454" alt="salaire_max_moy" src="https://github.com/user-attachments/assets/0ba2a1ef-7f08-4074-8134-80c0f109373b" />
 
 
-```
 ### 12.6 Analyse 3 : Répartition des offres d’emploi par secteur d’activité
 
 Cette visualisation montre la répartition des offres d’emploi selon les secteurs d’activité.
@@ -1127,9 +1125,9 @@ if not df_work_type_distribution.empty:
 else:
     st.warning("Aucune donnée disponible pour l'analyse 5.")
 ```
-```
+
 <img width="783" height="427" alt="image" src="https://github.com/user-attachments/assets/fee50481-9e2a-47e9-9d98-7ef8a590dfc3" />
-```
+
 ### 12.8 Résumé de la partie Streamlit
 
 La partie Streamlit complète le projet en ajoutant une couche de visualisation interactive au-dessus des tables Gold.
