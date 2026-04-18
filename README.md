@@ -809,16 +809,107 @@ LIMIT 10;
 ---
 ## 12. Partie Streamlit
 
-### 12.1 Exemple de récupération des données
+Les visualisations ont été réalisées avec **Streamlit in Snowflake** à partir des tables Gold.  
+L’application permet d’exécuter les requêtes SQL directement depuis Snowflake, de convertir les résultats en DataFrame Pandas, puis d’afficher les graphiques avec **Altair**.
 
-Les visualisations ont été réalisées avec **Streamlit in Snowflake** à partir des tables Gold.
+---
+
+### 12.1 Import des bibliothèques et configuration de l’application
+
+Dans un premier temps, les bibliothèques nécessaires sont importées :
+
+- `streamlit` pour l’interface,
+- `pandas` pour la manipulation des données,
+- `altair` pour les graphiques,
+- `get_active_session` pour récupérer la session Snowflake active.
+
+Ensuite, la page est configurée avec un titre et une mise en page large.
 
 ```
-from snowflake.snowpark.context import get_active_session
 import streamlit as st
+import pandas as pd
 import altair as alt
+from snowflake.snowpark.context import get_active_session
+```
+# ============================================================
+# CONFIGURATION
+# ============================================================
+st.set_page_config(page_title="Analyse des offres LinkedIn", layout="wide")
+st.title("Analyse des Offres d'Emploi LinkedIn")
+st.markdown("Visualisations construites à partir des tables Gold dans Snowflake.")
 
 session = get_active_session()
+### 12.2 Requêtes SQL utilisées dans Streamlit
+
+L’application Streamlit repose sur quatre requêtes SQL principales, chacune correspondant à une analyse spécifique réalisée sur les tables de la couche Gold :
+
+- le **top 10 des titres de postes les plus publiés par industrie**,
+- le **top 10 des postes les mieux rémunérés par industrie**,
+- la **répartition des offres d’emploi par secteur d’activité**,
+- la **répartition des offres d’emploi par type d’emploi**.
+
+Ces requêtes sont exécutées directement depuis Snowflake, puis leurs résultats sont convertis en DataFrames Pandas pour être affichés dans l’interface Streamlit.
+
+```
+query_top_titles = """
+SELECT
+    industry_id,
+    title,
+    nb_offres,
+    rang
+FROM (
+    SELECT
+        ji.industry_id,
+        jp.title,
+        COUNT(*) AS nb_offres,
+        ROW_NUMBER() OVER (
+            PARTITION BY ji.industry_id
+            ORDER BY COUNT(*) DESC
+        ) AS rang
+    FROM linkedin_lab.gold.job_industries ji
+    JOIN linkedin_lab.gold.job_postings jp
+        ON ji.job_id = jp.job_id
+    GROUP BY ji.industry_id, jp.title
+)
+WHERE rang <= 10
+ORDER BY industry_id, rang;
+"""
+
+query_top_salary = """
+SELECT
+    industry_id,
+    title,
+    avg_max_salary,
+    rang
+FROM (
+    SELECT
+        ji.industry_id,
+        jp.title,
+        ROUND(AVG(jp.max_salary), 2) AS avg_max_salary,
+        ROW_NUMBER() OVER (
+            PARTITION BY ji.industry_id
+            ORDER BY AVG(jp.max_salary) DESC
+        ) AS rang
+    FROM linkedin_lab.gold.job_industries ji
+    JOIN linkedin_lab.gold.job_postings jp
+        ON ji.job_id = jp.job_id
+    WHERE jp.max_salary IS NOT NULL
+      AND jp.pay_period = 'YEARLY'
+    GROUP BY ji.industry_id, jp.title
+)
+WHERE rang <= 10
+ORDER BY industry_id, rang;
+"""
+
+query_industry_distribution = """
+SELECT
+    industry_id,
+    COUNT(*) AS nb_offres,
+    ROUND(100 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS pourcentage
+FROM linkedin_lab.gold.job_industries
+GROUP BY industry_id
+ORDER BY nb_offres DESC;
+"""
 
 query_work_type_distribution = """
 SELECT
@@ -831,33 +922,7 @@ WHERE formatted_work_type IS NOT NULL
 GROUP BY formatted_work_type
 ORDER BY nb_offres DESC;
 """
-
-df_work_type_distribution = session.sql(query_work_type_distribution).to_pandas()
 ```
-
-### 12.2 Exemple d’affichage Streamlit
-
-```
-st.header("Répartition des offres d'emploi par type d'emploi")
-
-if not df_work_type_distribution.empty:
-    chart = (
-        alt.Chart(df_work_type_distribution)
-        .mark_bar()
-        .encode(
-            x=alt.X("TYPE_EMPLOI:N", sort="-y", title="Type d'emploi"),
-            y=alt.Y("NB_OFFRES:Q", title="Nombre d'offres"),
-            tooltip=["TYPE_EMPLOI", "NB_OFFRES", "POURCENTAGE"]
-        )
-        .properties(height=450)
-    )
-
-    st.altair_chart(chart, use_container_width=True)
-    st.dataframe(df_work_type_distribution, use_container_width=True)
-else:
-    st.warning("Aucune donnée disponible.")
-```
-
 ---
 ## 13. Limites du projet
 
