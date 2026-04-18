@@ -837,9 +837,8 @@ from snowflake.snowpark.context import get_active_session
 st.set_page_config(page_title="Analyse des offres LinkedIn", layout="wide")
 st.title("Analyse des Offres d'Emploi LinkedIn")
 st.markdown("Visualisations construites à partir des tables Gold dans Snowflake.")
-```
-
 session = get_active_session()
+```
 ### 12.2 Requêtes SQL utilisées dans Streamlit
 
 L’application Streamlit repose sur quatre requêtes SQL principales, chacune correspondant à une analyse spécifique réalisée sur les tables de la couche Gold :
