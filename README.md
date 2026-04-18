@@ -61,6 +61,8 @@ linkedin_lab
     ├── job_skills
     ├── job_industries
     └── job_postings_full
+````
+---
 
 ## 5. Étapes de réalisation
 
