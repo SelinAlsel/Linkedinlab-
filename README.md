@@ -238,6 +238,7 @@ Cette table est construite à partir de `bronze.job_postings` en appliquant un n
 - contrôle de cohérence sur les salaires et les dates.
 
 ```sql
+USE SCHEMA silver;
 CREATE OR REPLACE TABLE silver.job_postings AS
 SELECT
     TRIM(job_id) AS job_id,
@@ -371,6 +372,7 @@ Cette table constitue la table métier principale.
 Elle regroupe les colonnes essentielles des offres d’emploi après nettoyage.
 
 ```sql
+USE SCHEMA gold;
 CREATE OR REPLACE TABLE gold.job_postings AS
 SELECT
     job_id,
