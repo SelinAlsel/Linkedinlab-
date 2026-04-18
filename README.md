@@ -1069,7 +1069,7 @@ L’affichage comprend :
 ```
 # ANALYSE 4 : REPARTITION DES OFFRES PAR SECTEUR D'ACTIVITE
 
-st.header("3. Répartition des offres d'emploi par secteur d'activité")
+st.header("4. Répartition des offres d'emploi par secteur d'activité")
 
 if not df_industry_distribution.empty:
     chart_industry_distribution = (
@@ -1087,12 +1087,11 @@ if not df_industry_distribution.empty:
     st.dataframe(df_industry_distribution, use_container_width=True)
 else:
     st.warning("Aucune donnée disponible pour l'analyse 3.")
-
-
 ```
+<img width="764" height="459" alt="image" src="https://github.com/user-attachments/assets/2d0a133a-4888-46e0-922f-afb96817bd59" />
 
 
-### 12.7 Analyse 4 : Répartition des offres d’emploi par type d’emploi
+### 12.7 Analyse 5 : Répartition des offres d’emploi par type d’emploi
 
 Cette dernière visualisation présente la répartition des offres par type d’emploi.
 
@@ -1104,9 +1103,9 @@ Deux représentations graphiques sont proposées :
 Un tableau récapitulatif est également affiché.
 
 ```
-# ANALYSE 4 : REPARTITION DES OFFRES PAR TYPE D'EMPLOI
+# ANALYSE 5 : REPARTITION DES OFFRES PAR TYPE D'EMPLOI
 
-st.header("4. Répartition des offres d'emploi par type d'emploi")
+st.header("5. Répartition des offres d'emploi par type d'emploi")
 
 if not df_work_type_distribution.empty:
     col1, col2 = st.columns(2)
