@@ -831,9 +831,8 @@ import pandas as pd
 import altair as alt
 from snowflake.snowpark.context import get_active_session
 ```
-# ============================================================
-# CONFIGURATION
-# ============================================================
+#### CONFIGURATION
+
 st.set_page_config(page_title="Analyse des offres LinkedIn", layout="wide")
 st.title("Analyse des Offres d'Emploi LinkedIn")
 st.markdown("Visualisations construites à partir des tables Gold dans Snowflake.")
@@ -923,6 +922,17 @@ GROUP BY formatted_work_type
 ORDER BY nb_offres DESC;
 """
 ```
+### 12.3 Chargement des données depuis Snowflake
+
+Après la définition des requêtes SQL, les résultats sont récupérés à l’aide de la session Snowflake active.  
+Chaque requête est exécutée avec `session.sql(...)`, puis convertie en DataFrame Pandas avec `.to_pandas()`.
+```
+# CHARGEMENT DES DONNEES
+
+df_top_titles = session.sql(query_top_titles).to_pandas()
+df_top_salary = session.sql(query_top_salary).to_pandas()
+df_industry_distribution = session.sql(query_industry_distribution).to_pandas()
+df_work_type_distribution = session.sql(query_work_type_distribution).to_pandas()
 ---
 ## 13. Limites du projet
 
