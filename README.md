@@ -1214,6 +1214,8 @@ if not df_top_skills.empty:
 else:
     st.warning("Aucune donnée disponible pour l'analyse 6.")
 ```
+<img width="610" height="466" alt="image" src="https://github.com/user-attachments/assets/0895bb18-2317-4bc7-a96d-05e237c6a05a" />
+
 12.9 Analyse 7 : Avantages les plus fréquents
 
 Cette visualisation permet d’identifier les avantages les plus fréquemment proposés dans les offres d’emploi.
@@ -1232,6 +1234,8 @@ un histogramme des avantages les plus fréquents,
 un diagramme en donut,
 un tableau récapitulatif des résultats.
 ```
+<img width="539" height="472" alt="image" src="https://github.com/user-attachments/assets/12526391-08d9-45eb-9093-516e1a9e5c7f" />
+
 ### 12.10 Résumé de la partie Streamlit
 
 La partie Streamlit complète le projet en ajoutant une couche de visualisation interactive au-dessus des tables Gold.
