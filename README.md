@@ -61,3 +61,16 @@ linkedin_lab
     ├── job_skills
     ├── job_industries
     └── job_postings_full
+
+## 5. Étapes de réalisation
+
+### 5.1 Création de la base et des schémas
+
+```sql
+CREATE DATABASE IF NOT EXISTS linkedin_lab;
+USE DATABASE linkedin_lab;
+
+CREATE SCHEMA IF NOT EXISTS bronze;
+CREATE SCHEMA IF NOT EXISTS silver;
+CREATE SCHEMA IF NOT EXISTS gold;
+```
