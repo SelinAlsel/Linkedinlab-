@@ -933,6 +933,7 @@ df_top_titles = session.sql(query_top_titles).to_pandas()
 df_top_salary = session.sql(query_top_salary).to_pandas()
 df_industry_distribution = session.sql(query_industry_distribution).to_pandas()
 df_work_type_distribution = session.sql(query_work_type_distribution).to_pandas()
+````
 ---
 ## 13. Limites du projet
 
