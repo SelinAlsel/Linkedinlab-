@@ -491,8 +491,30 @@ LEFT JOIN gold.benefits gb
 
 ---
 ## 9. Contrôles qualité
+## 9.1 Vérification du contenu des tables
 
-### 9.1 Vérification des volumes
+Les requêtes suivantes permettent d’afficher le contenu des tables des couches Bronze, Silver et Gold afin de vérifier que les données ont bien été chargées, nettoyées et transformées.
+
+```sql
+-- Vérification des tables Bronze
+SELECT * FROM bronze.job_postings;
+SELECT * FROM bronze.benefits;
+SELECT * FROM bronze.job_skills;
+SELECT * FROM bronze.job_industries;
+
+-- Vérification des tables Silver
+SELECT * FROM silver.job_postings;
+SELECT * FROM silver.benefits;
+SELECT * FROM silver.job_skills;
+SELECT * FROM silver.job_industries;
+
+-- Vérification des tables Gold
+SELECT * FROM gold.job_postings;
+SELECT * FROM gold.benefits;
+SELECT * FROM gold.job_skills;
+SELECT * FROM gold.job_industries;
+```
+### 9.2 Vérification des volumes
 
 Cette étape permet de comparer le nombre de lignes entre les couches Bronze, Silver et Gold.
 
@@ -513,7 +535,7 @@ SELECT COUNT(*) AS bronze_job_industries_count FROM bronze.job_industries;
 SELECT COUNT(*) AS silver_job_industries_count FROM silver.job_industries;
 SELECT COUNT(*) AS gold_job_industries_count   FROM gold.job_industries;
 ```
-### 9.2 Vérification des doublons
+### 9.3 Vérification des doublons
 
 Cette vérification permet de s’assurer qu’il n’existe pas de doublons exacts dans les tables Silver.
 
@@ -560,7 +582,7 @@ FROM linkedin_lab.silver.job_industries
 GROUP BY job_id, industry_id
 HAVING COUNT(*) > 1;
 ```
-### 9.3 Vérification des chaînes vides
+### 9.4 Vérification des chaînes vides
 
 Cette étape permet d’identifier les lignes contenant des valeurs nulles ou des chaînes vides dans les colonnes clés.
 
@@ -586,7 +608,7 @@ FROM linkedin_lab.silver.job_industries
 WHERE job_id IS NULL OR TRIM(job_id) = ''
    OR industry_id IS NULL OR TRIM(industry_id) = '';
 ```
-### 9.4 Vérification de la cohérence métier
+### 9.5 Vérification de la cohérence métier
 
 Cette étape permet de détecter certaines incohérences métier, notamment :
 
@@ -616,7 +638,7 @@ WHERE (views < 0)
    OR (max_salary < 0);
 
 ```
-### 9.5 Vérification des valeurs aberrantes
+### 9.6 Vérification des valeurs aberrantes
 
 Cette étape permet de repérer les salaires anormalement élevés qui pourraient correspondre à des anomalies dans les données.
 
