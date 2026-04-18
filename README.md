@@ -1128,12 +1128,8 @@ L’application permet :
 
 Cette interface rend les résultats plus lisibles et facilite l’exploration des données pour l’utilisateur final.
 ---
-## 13. Limites du projet
 
-Toutes les analyses demandées ne sont pas encore entièrement couvertes avec seulement 4 fichiers.  
-L’analyse sur la **taille d’entreprise** nécessite au minimum `companies.json`.
----
-## 14. Conclusion
+## 13. Conclusion
 
 Ce projet a permis de :
 
@@ -1150,4 +1146,3 @@ Les principaux apprentissages concernent :
 - le nettoyage des données,
 - la structuration des pipelines de données,
 - l’importance de séparer données brutes, données nettoyées et données analytiques.
-- 
