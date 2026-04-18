@@ -1150,8 +1150,89 @@ else:
 ```
 
 <img width="783" height="427" alt="image" src="https://github.com/user-attachments/assets/fee50481-9e2a-47e9-9d98-7ef8a590dfc3" />
+##12.8 Analyse 6 : Compétences les plus demandées
 
-### 12.8 Résumé de la partie Streamlit
+Cette visualisation met en évidence les compétences les plus demandées dans les offres d’emploi.
+L’affichage comprend :
+
+-un histogramme des compétences les plus fréquentes,
+-un diagramme en donut,
+-un tableau récapitulatif des résultats.
+```
+query_top_skills = """
+SELECT
+    skill_abr,
+    COUNT(*) AS nb_offres
+FROM linkedin_lab.gold.job_skills
+GROUP BY skill_abr
+ORDER BY nb_offres DESC
+LIMIT 10;
+"""
+
+df_top_skills = session.sql(query_top_skills).to_pandas()
+
+st.header("6. Compétences les plus demandées")
+
+if not df_top_skills.empty:
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("Histogramme des compétences")
+
+        chart_top_skills = (
+            alt.Chart(df_top_skills)
+            .mark_bar()
+            .encode(
+                x=alt.X("NB_OFFRES:Q", title="Nombre d'offres"),
+                y=alt.Y("SKILL_ABR:N", sort="-x", title="Compétence"),
+                tooltip=["SKILL_ABR", "NB_OFFRES"]
+            )
+            .properties(height=450)
+        )
+
+        st.altair_chart(chart_top_skills, use_container_width=True)
+
+    with col2:
+        st.subheader("Répartition en donut chart")
+
+        donut_skills = (
+            alt.Chart(df_top_skills)
+            .mark_arc(innerRadius=70)
+            .encode(
+                theta=alt.Theta("NB_OFFRES:Q", title="Nombre d'offres"),
+                color=alt.Color("SKILL_ABR:N", title="Compétence"),
+                tooltip=["SKILL_ABR", "NB_OFFRES"]
+            )
+            .properties(height=450)
+        )
+
+        st.altair_chart(donut_skills, use_container_width=True)
+
+    st.subheader("Table des résultats")
+    st.dataframe(df_top_skills, use_container_width=True)
+
+else:
+    st.warning("Aucune donnée disponible pour l'analyse 6.")
+```
+12.9 Analyse 7 : Avantages les plus fréquents
+
+Cette visualisation permet d’identifier les avantages les plus fréquemment proposés dans les offres d’emploi.
+L’affichage comprend :
+
+-un histogramme des avantages les plus fréquents,
+-un diagramme en donut,
+-un tableau récapitulatif des résultats.
+```
+12.7 Analyse 7 : Avantages les plus fréquents
+
+Cette visualisation permet d’identifier les avantages les plus fréquemment proposés dans les offres d’emploi.
+L’affichage comprend :
+
+un histogramme des avantages les plus fréquents,
+un diagramme en donut,
+un tableau récapitulatif des résultats.
+```
+### 12.10 Résumé de la partie Streamlit
 
 La partie Streamlit complète le projet en ajoutant une couche de visualisation interactive au-dessus des tables Gold.
 
