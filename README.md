@@ -934,6 +934,198 @@ df_top_salary = session.sql(query_top_salary).to_pandas()
 df_industry_distribution = session.sql(query_industry_distribution).to_pandas()
 df_work_type_distribution = session.sql(query_work_type_distribution).to_pandas()
 ````
+
+### 12.4 Analyse 1 : Top 10 des titres de postes les plus publiés par industrie
+
+Cette première partie de l’application permet à l’utilisateur de sélectionner une industrie, puis d’afficher les 10 titres de postes les plus publiés dans cette industrie.
+
+L’affichage comprend :
+
+- une liste déroulante pour choisir l’industrie,
+- un histogramme en barres,
+- un tableau des résultats.
+
+```
+# ANALYSE 1 : TOP 10 DES TITRES LES PLUS PUBLIES PAR INDUSTRIE
+
+st.header("1. Top 10 des titres de postes les plus publiés par industrie")
+
+if not df_top_titles.empty:
+    industries_titles = sorted(df_top_titles["INDUSTRY_ID"].astype(str).unique())
+    selected_industry_titles = st.selectbox(
+        "Choisir une industrie pour les titres les plus publiés",
+        industries_titles,
+        key="titles_industry"
+    )
+
+    filtered_titles = df_top_titles[
+        df_top_titles["INDUSTRY_ID"].astype(str) == selected_industry_titles
+    ].copy()
+
+    chart_titles = (
+        alt.Chart(filtered_titles)
+        .mark_bar()
+        .encode(
+            x=alt.X("NB_OFFRES:Q", title="Nombre d'offres"),
+            y=alt.Y("TITLE:N", sort="-x", title="Titre du poste"),
+            tooltip=["INDUSTRY_ID", "TITLE", "NB_OFFRES", "RANG"]
+        )
+        .properties(height=450)
+    )
+
+    st.altair_chart(chart_titles, use_container_width=True)
+    st.dataframe(filtered_titles, use_container_width=True)
+else:
+    st.warning("Aucune donnée disponible pour l'analyse 1.")
+```
+
+### 12.5 Analyse 2 : Top 10 des postes les mieux rémunérés par industrie
+
+Cette deuxième partie permet à l’utilisateur de sélectionner une industrie et d’afficher les 10 postes les mieux rémunérés, selon le salaire maximum moyen.
+
+L’affichage comprend :
+
+- une liste déroulante pour choisir l’industrie,
+- un histogramme en barres,
+- un tableau récapitulatif.
+
+```
+# ANALYSE 2 : TOP 10 DES POSTES LES MIEUX REMUNERES PAR INDUSTRIE
+
+st.header("2. Top 10 des postes les mieux rémunérés par industrie")
+
+if not df_top_salary.empty:
+    industries_salary = sorted(df_top_salary["INDUSTRY_ID"].astype(str).unique())
+    selected_industry_salary = st.selectbox(
+        "Choisir une industrie pour les postes les mieux rémunérés",
+        industries_salary,
+        key="salary_industry"
+    )
+
+    filtered_salary = df_top_salary[
+        df_top_salary["INDUSTRY_ID"].astype(str) == selected_industry_salary
+    ].copy()
+
+    chart_salary = (
+        alt.Chart(filtered_salary)
+        .mark_bar()
+        .encode(
+            x=alt.X("AVG_MAX_SALARY:Q", title="Salaire maximum moyen"),
+            y=alt.Y("TITLE:N", sort="-x", title="Titre du poste"),
+            tooltip=["INDUSTRY_ID", "TITLE", "AVG_MAX_SALARY", "RANG"]
+        )
+        .properties(height=450)
+    )
+
+    st.altair_chart(chart_salary, use_container_width=True)
+    st.dataframe(filtered_salary, use_container_width=True)
+else:
+    st.warning("Aucune donnée disponible pour l'analyse 2.")
+```
+
+### 12.6 Analyse 4 : Répartition des offres d’emploi par secteur d’activité
+
+Cette visualisation montre la répartition des offres d’emploi selon les secteurs d’activité.
+
+L’affichage comprend :
+
+- un histogramme en barres,
+- un tableau des effectifs et pourcentages par secteur.
+
+```
+# ANALYSE 4 : REPARTITION DES OFFRES PAR SECTEUR D'ACTIVITE
+
+st.header("4. Répartition des offres d'emploi par secteur d'activité")
+
+if not df_industry_distribution.empty:
+    chart_industry_distribution = (
+        alt.Chart(df_industry_distribution)
+        .mark_bar()
+        .encode(
+            x=alt.X("INDUSTRY_ID:N", sort="-y", title="Secteur d'activité"),
+            y=alt.Y("NB_OFFRES:Q", title="Nombre d'offres"),
+            tooltip=["INDUSTRY_ID", "NB_OFFRES", "POURCENTAGE"]
+        )
+        .properties(height=500)
+    )
+
+    st.altair_chart(chart_industry_distribution, use_container_width=True)
+    st.dataframe(df_industry_distribution, use_container_width=True)
+else:
+    st.warning("Aucune donnée disponible pour l'analyse 4.")
+```
+
+
+### 12.7 Analyse 5 : Répartition des offres d’emploi par type d’emploi
+
+Cette dernière visualisation présente la répartition des offres par type d’emploi.
+
+Deux représentations graphiques sont proposées :
+
+- un histogramme pour comparer les effectifs,
+- un diagramme en donut pour représenter visuellement la répartition.
+
+Un tableau récapitulatif est également affiché.
+
+```
+# ANALYSE 5 : REPARTITION DES OFFRES PAR TYPE D'EMPLOI
+
+st.header("5. Répartition des offres d'emploi par type d'emploi")
+
+if not df_work_type_distribution.empty:
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("Histogramme des types d'emploi")
+
+        chart_work_type_distribution = (
+            alt.Chart(df_work_type_distribution)
+            .mark_bar()
+            .encode(
+                x=alt.X("TYPE_EMPLOI:N", sort="-y", title="Type d'emploi"),
+                y=alt.Y("NB_OFFRES:Q", title="Nombre d'offres"),
+                tooltip=["TYPE_EMPLOI", "NB_OFFRES", "POURCENTAGE"]
+            )
+            .properties(height=450)
+        )
+
+        st.altair_chart(chart_work_type_distribution, use_container_width=True)
+
+    with col2:
+        st.subheader("Répartition en donut chart")
+
+        donut_chart = (
+            alt.Chart(df_work_type_distribution)
+            .mark_arc(innerRadius=70)
+            .encode(
+                theta=alt.Theta("NB_OFFRES:Q", title="Nombre d'offres"),
+                color=alt.Color("TYPE_EMPLOI:N", title="Type d'emploi"),
+                tooltip=["TYPE_EMPLOI", "NB_OFFRES", "POURCENTAGE"]
+            )
+            .properties(height=450)
+        )
+
+        st.altair_chart(donut_chart, use_container_width=True)
+
+    st.subheader("Table des résultats")
+    st.dataframe(df_work_type_distribution, use_container_width=True)
+
+else:
+    st.warning("Aucune donnée disponible pour l'analyse 5.")
+```
+
+### 12.8 Résumé de la partie Streamlit
+
+La partie Streamlit complète le projet en ajoutant une couche de visualisation interactive au-dessus des tables Gold.
+
+L’application permet :
+
+- d’exécuter des requêtes SQL directement sur Snowflake,
+- de transformer les résultats en DataFrames Pandas,
+- d’afficher des graphiques interactifs avec Altair,
+- de proposer des filtres dynamiques pour certaines analyses.
+
+Cette interface rend les résultats plus lisibles et facilite l’exploration des données pour l’utilisateur final.
 ---
 ## 13. Limites du projet
 
